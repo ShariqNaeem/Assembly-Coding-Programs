@@ -1,0 +1,182 @@
+.model small
+.stack 100h
+.data
+var db 1,2,3,5,6,9
+v db 10,"Enter a Number From Your coded List: $"
+r db "Index # : $"
+msg1 db 10, "Found$"
+msg2 db 10, "Not Found$"
+.code
+
+main proc
+mov ax,@data
+mov ds,ax
+
+Start:
+mov ah,9
+mov dx,offset v
+int 21h
+
+mov ah,1
+int 21h
+
+mov bl,al
+
+mov cx,lengthof var
+mov si,0
+L1:
+mov al,var[si]
+add al,48
+cmp bl,al
+je Found
+inc si
+loop l1
+
+
+
+NotFound:
+mov ah,9
+mov dx,offset msg2
+int 21h
+jmp exit
+
+Found:
+mov ah,9
+mov dx,offset msg1
+int 21h
+
+mov ah,2
+mov dl,10
+int 21h
+
+
+mov ah,9
+mov dx,offset r
+int 21h
+
+mov ax,si
+call outdec
+
+jmp Start
+
+
+
+exit:
+mov ah,4ch
+int 21h
+
+main endp
+
+INDEC PROC
+
+PUSH BX
+PUSH CX
+PUSH DX
+BEGIN:
+MOV CX,0
+MOV BX,0
+
+MOV AH,2
+MOV DL,'?'
+INT 21h
+
+MOV AH,1
+INT 21h
+
+CMP AL,'-'
+JE MINUS
+CMP AL,'+'
+JE PLUS
+JMP @LOOP
+
+MINUS:
+MOV CX,1
+
+PLUS:
+INT 21h
+
+@LOOP:
+CMP AL,'0'
+JL INVALID
+CMP AL,'9'
+JG INVALID
+SUB AL,48
+MOV AH,0
+PUSH AX
+MOV AX,10
+MUL BX
+POP BX
+ADD BX,AX
+
+MOV AH,1
+INT 21h
+
+CMP AL,13
+JNE @LOOP
+MOV AX,BX
+CMP CX,0
+JE EXIT
+NEG AX
+
+EXIT:
+POP DX
+POP CX
+POP BX
+RET
+
+INVALID:
+MOV AH,2
+MOV DL,10
+INT 21h
+
+MOV DL,13
+INT 21h
+
+JMP BEGIN
+INDEC ENDP
+
+outdec proc
+
+push ax
+push bx
+push cx
+push dx
+
+mov cx,0
+cmp ax,0
+jge @else
+
+push ax
+mov ah,2
+mov dl,'-'
+int 21h
+pop ax
+neg ax
+
+@else:
+inc cx
+mov bx,10
+mov dx,0
+div bx
+push dx 
+cmp ax,0
+jnz @else
+
+
+mov ah,2
+print:
+
+pop dx
+add dx,48
+int 21h
+loop print
+
+pop dx
+pop cx
+pop bx
+pop ax
+
+ret
+outdec endp
+
+end main

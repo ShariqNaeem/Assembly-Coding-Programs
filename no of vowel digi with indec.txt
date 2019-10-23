@@ -1,0 +1,225 @@
+.Model Small
+.Stack 100h
+.Data
+Output db "YOUR INPUT IS:$"
+input DB " Shariq @123 , Taimoor #456 , Shehzad *789  $"
+R1 DB 10,"NUMBER OF VOWEL: $"
+R2 DB 10,"NUMBER OF CONSONANTS: $"
+R3 DB 10,"NUMBER OF DIGIT: $"
+R4 DB 10,"NUMBER OF INVALID CHARACTER: $"
+R5 DB 10,"NUMBER OF SPACES: $"
+VOWEL dw 0
+CONSONANTS Dw 0
+DIGIT Dw 0
+INVALID Dw 0
+SPACES Dw 0
+.Code
+
+Main Proc
+mov ax,@data
+mov ds,ax
+
+mov si,0
+mov cx,lengthof input
+
+Start:
+mov al,input[si]
+
+cmp al,32
+jle L1
+jmp L2
+
+L1:
+cmp al,32
+je Spac
+jmp L3
+
+L3:
+inc invalid
+jmp user
+
+Spac:
+inc Spaces
+jmp user
+
+L2:
+cmp al,48
+jge L4
+jmp L3
+
+L4:
+cmp al,57
+jle Digi
+jmp L5
+
+Digi:
+inc DIGIT
+jmp user
+
+L5:
+cmp al,'A'
+jge L6
+jmp L3
+
+L6:
+cmp al,'Z'
+jle L7
+jmp L8
+
+L7:
+cmp al,'A'
+je vow
+
+cmp al,'E'
+je vow
+
+cmp al,'I'
+je vow
+
+cmp al,'O'
+je vow
+
+cmp al,'U'
+je vow
+jmp CONSO
+
+vow:
+inc VOWEL
+jmp user
+
+CONSO:
+inc CONSONANTS
+jmp user
+
+L8:
+cmp al,'a'
+jge L9
+jmp L3
+
+L9:
+cmp al,'z'
+jle L10
+jmp L3
+
+L10:
+cmp al,'a'
+je vow
+
+cmp al,'e'
+je vow
+
+cmp al,'i'
+je vow
+
+cmp al,'o'
+je vow
+
+cmp al,'u'
+je vow
+jmp CONSO
+
+User:
+inc Si
+dec cx
+cmp cx,0
+je Exit
+jmp Start
+
+Exit:
+mov ah,9
+mov dx,offset output
+int 21h
+
+mov ah,9
+mov dx,offset input
+int 21h
+
+mov ah,9
+mov dx,offset R5
+int 21h
+
+
+mov ax,Spaces
+call outdec
+
+mov ah,9
+mov dx,offset R3
+int 21h
+
+mov ax,DIGIT
+call outdec
+
+mov ah,9
+mov dx,offset R1
+int 21h
+
+mov ax,VOWEL
+call outdec
+
+mov ah,9
+mov dx,offset R2
+int 21h
+
+mov ax,CONSONANTS
+call outdec
+
+mov ah,9
+mov dx,offset R4
+int 21h
+
+mov ax,invalid
+call outdec
+
+mov ah,4ch
+int 21h
+
+main endp
+outdec proc
+PUSH ax
+PUSH bx
+PUSH cx
+PUSH dx
+
+mov cx,0
+
+cmp ax,0
+jge @ELSE
+PUSH ax
+
+mov ah,2
+mov dl,'-'
+int 21h
+POP ax
+neg ax
+
+@ELSE:
+mov bx,10
+mov dx,0
+div bx
+inc cx
+PUSH dx
+
+cmp ax,0
+jnz @ELSE
+mov ah,2
+
+Print:
+
+POP dx
+add dx,48
+int 21h
+
+LOOP print
+
+POP dx
+POP cx
+POP bx
+POP ax
+
+ret
+outdec endp
+
+end main
+
+
+

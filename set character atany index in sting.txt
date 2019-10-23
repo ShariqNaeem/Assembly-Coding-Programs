@@ -1,0 +1,90 @@
+.MODEL SMALL
+.STACK 100H
+.DATA
+	STR1 Byte "DEMO STRING $"
+	NEW Byte ?
+	ASKIND BYTE "INPUT INDEX: $"
+	ASKCHAR BYTE "INPUT CHARACTER: $"
+		NEWLINE MACRO
+		mov ah,2
+		mov dl,10
+		int 21h 
+		mov ah,2
+		mov dl,13
+		int 21h   
+	ENDM
+
+.CODE
+MAIN PROC
+MOV AX,@DATA
+MOV DS,AX
+
+MOV AH,9
+MOV DX,OFFSET STR1
+INT 21H
+
+	NEWLINE
+
+MOV AH,9
+MOV DX,OFFSET ASKCHAR
+INT 21H
+
+MOV AH,1
+INT 21H
+
+MOV AH,0
+PUSH AX
+
+MOV AH,9
+MOV DX,OFFSET ASKIND
+INT 21H
+
+MOV AH,1
+INT 21H
+
+MOV AH,0
+sub ax,30h
+PUSH AX
+
+pop ax	;character index
+mov cl,al
+mov si,0
+
+transfer:
+		mov bl,byte ptr str1[si]
+		mov new[si],bl
+		inc si
+loop transfer
+
+pop bx
+;inc si
+mov new[si],bl
+;inc si
+mov al,cl
+mov ah,0
+mov cx,sizeof str1
+inc cx
+sub cx,ax
+trans:
+		mov bl,byte ptr str1[si]
+		mov new[si+1],bl
+		inc si
+loop trans
+
+mov byte ptr new[si],"$"
+
+MOV AH,9
+MOV DX,OFFSET new
+INT 21H
+
+
+
+
+
+
+
+MOV AH,4CH
+INT 21H
+MAIN ENDp
+END MAIN
+

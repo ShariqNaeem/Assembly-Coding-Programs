@@ -1,0 +1,91 @@
+.model small
+.stack 100h
+.data
+src db "radar radar$"
+des db lengthof src dup(?)
+p  db "IT'S A PALLINDROME :) :* $"
+np db "IT'S NOT PALLINDROME :( $"
+v1 db "INPUT: $"
+v2 db "OUTPUT: $"
+.code
+main proc
+
+mov ax,@data
+mov ds,ax
+
+mov bx,lengthof src
+sub bx,2
+mov si,bx
+mov di,0
+add bx,1
+mov cx,bx
+
+L1:
+mov al,src[si]
+mov des[di],al
+inc di
+dec si
+LOOP L1
+mov des[di],'$'
+
+mov ah,9
+mov dx,OFFSET v1
+int 21h
+
+mov ah,9
+mov dx,OFFSET src
+int 21h
+
+mov ah,2
+mov dl,0ah
+int 21h
+
+mov ah,9
+mov dx,OFFSET v2
+int 21h
+
+mov ah,9
+mov dx,OFFSET des
+int 21h
+
+mov ah,2
+mov dl,0ah
+int 21h
+
+mov si,0
+mov cx,lengthof src
+mov bx,cx
+S1:
+mov al,src[si]
+cmp des[si],al
+je S2
+jmp S3
+
+S2:
+inc si
+cmp bx,si
+je S4
+jmp S5
+
+S4:
+mov ah,9
+mov dx,OFFSET p
+int 21h
+jmp S5
+
+S3:
+mov ah,9
+mov dx,OFFSET np
+int 21h
+jmp Exit
+
+
+S5:
+Loop S1
+
+EXIT:
+mov ah,4ch
+int 21h
+
+main endp
+end main

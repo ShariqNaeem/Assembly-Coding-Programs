@@ -1,0 +1,174 @@
+.Model Small
+.Stack 100h
+.Data
+R1 DB 10, "ENTER BY YOUR CHOICE: $"
+R2 DB 10, "YOU HAVE ENTERED A VOWEL: $"
+R3 DB 10, "YOU HAVE ENTERED A CONSONANTS: $"
+R4 DB 10, "YOU HAVE ENTERED A DIGIT: $"
+R5 DB 10, "PRESS 'Y' FOR CONTINUE OR 'N' FOR EXIT: $"
+R6 DB 10, "INVALID OPTION: $"
+R7 DB 10, "YOU HAVE ENTERED A SPACE: $"
+.Code
+
+Main Proc
+mov ax,@data
+mov ds,ax
+
+Start:
+
+mov ah,9
+mov dx,offset R1
+int 21h
+
+mov ah,1
+int 21h
+
+mov bl,al
+
+mov ah,2
+mov dl,10
+int 21h
+
+cmp bl,32
+je Space
+jmp S
+
+Space:
+
+mov ah,9
+mov dx,offset R7
+int 21h
+jmp user
+
+S:
+cmp bl,48
+jge S1
+jmp S2
+
+S1:
+cmp bl,57
+jle DIGIT
+jmp B1
+
+DIGIT:
+
+mov ah,2
+mov dl,10
+int 21h
+
+mov ah,9
+mov dx,offset R4
+int 21h
+jmp user
+
+S2:
+mov ah,2
+mov dl,10
+int 21h
+
+mov ah,9
+mov dx,offset R6
+int 21h
+jmp user
+
+B1:
+cmp bl,'A'
+jge B2 
+jmp S2
+
+B2:
+cmp bl,'Z'
+jle B3
+jmp B4
+
+B3:
+cmp bl,'A'
+je VOWEL
+
+cmp bl,'E'
+je VOWEL
+
+cmp bl,'I'
+je VOWEL
+
+cmp bl,'O'
+je VOWEL
+
+cmp bl,'U'
+je VOWEL
+
+jmp CONSONANTS
+
+B4:
+cmp bl,'a'
+jge B5
+jmp S2
+
+B5:
+cmp bl,'z'
+jle B6
+jmp S2
+
+B6:
+cmp bl,'a'
+je VOWEL
+
+cmp bl,'e'
+je VOWEL
+
+cmp bl,'i'
+je VOWEL
+
+
+cmp bl,'o'
+je VOWEL
+
+
+cmp bl,'u'
+je VOWEL
+
+jmp CONSONANTS
+
+VOWEL:
+mov ah,9
+mov dx,offset R2
+int 21h
+jmp user
+
+CONSONANTS:
+mov ah,9
+mov dx,offset R3
+int 21h
+jmp user
+
+user:
+mov ah,9
+mov dx,offset R5
+int 21h
+
+mov ah,1
+int 21h
+
+mov cl,al
+cmp cl,'y'
+
+mov ah,2
+mov dl,10
+int 21h
+
+je Start
+jmp T1
+
+T1:
+cmp cl,'n'
+je EXIT
+jmp user
+
+Exit:
+mov ah,4ch
+int 21h
+
+
+Main EndP
+End Main
+

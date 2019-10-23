@@ -1,0 +1,198 @@
+.model small
+.stack 200h
+.data
+input db "as1 @$"
+v1 db "VOWELS: $"
+v2 db "CONSONANTS: $"
+v3 db "NUMBERS: $"
+v4 db "SPACES: $"
+v5 db "INVALID CHARACTERS: $"
+vowel db 48
+conso db 48
+number db 48
+space db 48
+invalid db 48
+.code
+main proc 
+
+mov ax,@data
+mov ds,ax
+
+mov si,0
+mov cx,lengthof input
+LL:
+mov al,input[si]
+
+cmp al,'z'
+jle L1
+jmp L2
+
+L1:
+cmp al,'a'
+jge L3
+jmp L4
+
+L3:
+cmp al,'a'
+je  L5
+jmp L6
+
+L5:
+inc vowel
+jmp continue
+
+L6:
+cmp al,'e'
+je L5
+jmp L7
+
+L7:
+cmp al,'i'
+je L5
+jmp L8
+
+L8:
+cmp al,'o'
+je L5
+jmp L9
+
+L9:
+cmp al,'u'
+je L5
+jmp L10
+
+L10:
+inc conso
+jmp continue
+
+L4:
+cmp al,'Z'
+jle L11
+jmp L2
+
+L11:
+cmp al,'A'
+jge L12
+jmp L13
+
+L12:
+cmp al,'A'
+je L5
+jmp L14
+
+L14:
+cmp al,'E'
+je L5
+jmp L15
+
+L15:
+cmp al,'I'
+je L5
+jmp L16
+
+L16:
+cmp al,'O'
+je L5
+jmp L17
+
+L17:
+cmp al,'U'
+je L5
+jmp L10
+
+L13:
+cmp al,58
+jl L18
+jmp L2
+
+L18:
+cmp al,48
+jge L19
+jmp L20
+
+L19:
+inc number
+jmp continue
+
+L20:
+cmp al,32
+je L21
+jmp L2
+
+L21:
+inc space
+jmp continue
+
+L2:
+inc invalid
+jmp continue
+
+continue:
+inc si
+dec cx
+cmp cx,1
+je exit
+jmp LL
+
+EXIT:
+mov ah,9
+mov dx,OFFSET v1
+int 21h
+
+mov ah,2
+mov dl,vowel
+int 21h
+
+mov ah,2
+mov dl,0ah
+int 21h
+
+mov ah,9
+mov dx,OFFSET v2
+int 21h
+
+mov ah,2
+mov dl,conso
+int 21h
+
+mov ah,2
+mov dl,0ah
+int 21h
+
+mov ah,9
+mov dx,OFFSET v3
+int 21h
+
+mov ah,2
+mov dl,number
+int 21h
+
+mov ah,2
+mov dl,0ah
+int 21h
+
+mov ah,9
+mov dx,OFFSET v4
+int 21h
+
+mov ah,2
+mov dl,space
+int 21h
+
+mov ah,2
+mov dl,0ah
+int 21h
+
+mov ah,9
+mov dx,OFFSET v5
+int 21h
+
+mov ah,2
+mov dl,invalid
+int 21h
+
+mov ah,4ch
+int 21h
+
+main endp
+end main

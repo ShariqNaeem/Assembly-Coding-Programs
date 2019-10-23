@@ -1,0 +1,101 @@
+.MODEL SMALL
+.STACK 100h
+.386
+.DATA
+save WORD 0
+b BYTE "Enter Base$"
+e BYTE "Enter Power$"
+space BYTE 10,13,"$"
+base WORD 0
+po WORD 0
+.CODE
+
+
+outdec PROC
+	
+push ax
+push bx
+push cx
+push dx
+mov bx,10
+mov cx,0
+cmp ax,0
+jge else_label
+mov ah,2
+mov dl,'-'
+int 21h
+pop ax
+neg ax
+else_label:
+mov dx,0
+div bx
+push dx
+inc cx
+cmp ax,0
+jne else_label
+mov ah,2
+print_label:
+pop dx
+add dl,30h
+int 21h
+loop print_label
+pop dx
+pop cx
+pop bx
+pop ax
+ret
+outdec endp
+
+power PROC 
+
+mov bp,sp
+mov bx,word ptr [bp+2]
+cmp bx,1
+JLE exit
+
+dec bx 
+push bx
+call power
+mul bx
+ret 2
+exit:
+mov bx,ax
+ret 2
+power endp
+
+
+MAIN PROC 
+mov ax,@data
+mov ds,ax
+mov ah,9
+mov dx,offset b
+int 21h
+mov ah,1
+int 21h
+mov ah,0
+sub ax,30h
+mov base,ax
+mov ah,9
+mov dx,offset space
+int 21h
+mov ah,9
+mov dx,offset e
+int 21h
+mov ah,1
+int 21h
+mov ah,0
+sub ax,30h
+push ax
+mov ax,base
+push ax
+mov ah,9
+mov dx,offset space
+int 21h
+pop ax
+call power
+call outdec
+
+mov ah,4ch
+int 21h
+main ENDP 
+END MAIN

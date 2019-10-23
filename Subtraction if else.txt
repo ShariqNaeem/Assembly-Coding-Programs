@@ -1,0 +1,39 @@
+.MOdel Small
+.stack 100h
+.data
+.Code 
+
+main proc
+
+mov ah,1
+int 21h
+mov bl,al
+
+mov ah,1
+int 21h
+
+cmp bl,al
+jl L1
+jmp L2
+
+L1:
+sub al,bl
+add al,48
+mov ah,2
+mov dl,al
+int 21h
+jmp L3
+
+L2:
+sub bl,al
+add bl,48
+mov ah,2
+mov dl,bl
+int 21h
+
+L3:
+mov ah,4ch   
+int 21h
+
+main endp
+end main

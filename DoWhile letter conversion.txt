@@ -1,0 +1,100 @@
+.model Small
+.stack 200h
+.data
+v1 db "ENTER ANY ALPHABET: $"
+v2 db " = YOUR CONVERSION IS: $"
+v3 db " :( CONVERSION INVALID: $"
+v4 db " PRESS (y) FOR "CONTINUE" and (n) FOR "STOP" THIS PROCESS :D $"
+.code 
+main proc
+mov ax,@data
+mov ds,ax
+
+Start:
+
+mov ah,9
+mov dx,OFFSET v1
+int 21h
+
+mov ah,1
+int 21h
+
+cmp al,'Z'
+jl L1
+jmp L4
+
+L1:
+cmp al,'A'
+jge L3
+jmp L4
+
+L4:
+cmp al,'a'
+jge L5
+jmp L2
+
+L5:
+cmp al,'z'
+jl L7
+jmp L2
+
+L7:
+
+mov ah,9
+mov dx,OFFSET v2
+int 21h
+
+mov ah,2
+sub al,32
+mov dl,al
+int 21h
+jmp @instruction
+
+L3:
+mov ah,9
+mov dx,OFFSET v2
+int 21h
+
+mov ah,2
+add al,32
+mov dl,al
+int 21h
+jmp @instruction
+
+
+@instruction:
+
+mov ah,9
+mov dx,OFFSET v4
+int 21h
+
+mov ah,1
+int 21h
+
+mov bl,al
+
+cmp al,'y'
+je Start
+jmp L8
+
+L8:
+cmp bl,'n'
+je exit
+jmp @instruction
+
+
+L2:
+
+mov ah,9
+mov dx,OFFSET v3
+int 21h
+jmp @instruction
+
+
+exit:
+mov ah,4ch   
+int 21h
+
+
+main endp
+end main

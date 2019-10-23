@@ -1,0 +1,44 @@
+.MODEL Small
+.Stack 100h
+.386
+.DATA
+count =80
+KEYBOARD STRUCT
+    maxInput DB count
+    inputCount DB ?
+     bbuffer DB count DUP(?),'$'   
+ buffer DB count DUP(?),'$'
+
+KEYBOARD ENDS
+TAKINGINP KEYBOARD<>        		;len = ($-source)
+
+.CODE
+MAIN Proc
+MOV AX,@DATA
+MOV DS,AX
+
+mov ah,0ah
+mov dx, offset TAKINGINP 
+int 21h 
+
+
+MOV AH,2
+MOV DL,13
+INT 21H
+MOV DL,10
+INT 21H
+
+MOV BX,0
+MOVZX CX,TAKINGINP.INPUTCOUNT
+L1:
+    MOV AH,2
+    MOV DL,BYTE PTR[TAKINGINP.BBUFFER+BX]
+    INT 21H
+    INC BX
+LOOP L1
+
+
+MOV AH,4ch			
+INT 21h				
+MAIN ENDP
+END MAIN

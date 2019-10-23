@@ -1,0 +1,43 @@
+;calling outdec
+outdec proc
+
+push ax
+push bx
+push cx
+push dx
+
+mov cx,0
+cmp ax,0
+jge process
+
+push ax
+mov ah,2
+mov dl,'-'
+int 21h
+pop ax
+neg ax
+
+process:
+inc cx
+mov bx,10
+mov dx,0
+div bx
+push dx
+cmp ax,0
+jnz process
+
+mov ah,2
+print:
+pop dx
+add dx,48
+int 21h
+loop print
+
+pop dx
+pop cx
+pop bx
+pop ax
+
+ret
+outdec endp
+end main

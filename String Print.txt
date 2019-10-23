@@ -1,0 +1,21 @@
+.model small
+.stack 100h
+.data
+msg1 db "My Name Is Shariq.$"
+.code
+main proc
+
+Mov ax,@data
+Mov ds,ax
+
+
+Mov  ah , 9
+Mov dx,offset msg1
+Int 21h
+
+
+mov ah,4ch
+int 21h
+
+main endp
+end main
